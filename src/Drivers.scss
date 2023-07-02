@@ -1,0 +1,10 @@
+.grid-container {
+    display: flex;
+    height: 85%;
+    width: 85%;
+    background-color: red;
+}
+
+.inner-grid {
+    flex-grow: 1;
+}

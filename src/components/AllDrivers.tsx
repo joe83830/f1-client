@@ -2,10 +2,10 @@ import { AgGridReact } from "ag-grid-react";
 import { ColDef } from "ag-grid-community";
 import { useState, useEffect, useRef } from "react";
 import "/styles/Drivers.scss";
-// import 'ag-grid-enterprise';
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
+import { ColNames } from "../constants/ColNames";
 
 export default function AllDrivers() {
     const gridRef = useRef<AgGridReact>(null);
@@ -15,21 +15,18 @@ export default function AllDrivers() {
     const [isFilterToggled, setIsFilterToggled] = useState(false);
 
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
-        { field: "forename" },
-        { field: "surname" },
-        { field: "nationality", filter: true },
-        { field: "driverRef" },
-        { field: "number" },
-        { field: "dob", sortable: true, filter: true },
-        { field: "code" },
+        { field: ColNames.FORNAME },
+        { field: ColNames.SURNAME },
+        { field: ColNames.NATIONALITY, filter: true },
+        { field: ColNames.DRIVERREF, filter: true },
+        { field: ColNames.NUMBER },
+        { field: ColNames.DOB, sortable: true, filter: true },
+        { field: ColNames.CODE },
     ]);
 
     useEffect(() => {
         let isMounted = true;
 
-        console.log("useEffect called")
-        console.log("isFirstLoad.current: ", isFirstLoad.current)
-        console.log("isFilterToggled: ", isFilterToggled)
         if (isFirstLoad.current || isFilterToggled) {
             fetchData()
                 .then((data) => {
@@ -60,30 +57,14 @@ export default function AllDrivers() {
             driver.dob = new Date(driver.dob);
             uniqueNations.add(driver.nationality);
         });
-        // if (isMounted) {
-        // //     // setColumnDefs((colDefs) => {
-        // //     //     return colDefs.map((def) => {
-        // //     //         if (def.field === 'nationality') {
-        // //     //             return {
-        // //     //                 ...def,
-        // //     //                 filter: 'agSetColumnFilter',
-        // //     //                 filterParams: {
-        // //     //                     values: [...uniqueNations],
-        // //     //                 },
-        // //     //             };
-        // //     //         } else {
-        // //     //             return def;
-        // //     //         }
-        // //     //     });
-        // //     // });
-        //     setDriversData(data);
-        // }
+
         return data;
     };
 
     const handleFilterChanged = () => {
         if (gridRef.current) {
             const filterModel = gridRef.current.api.getFilterModel();
+            console.log(filterModel)
             setIsFilterToggled(true);
         }
     };

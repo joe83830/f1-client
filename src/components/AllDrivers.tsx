@@ -17,9 +17,13 @@ export default function AllDrivers() {
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: ColNames.FORNAME },
         { field: ColNames.SURNAME },
-        { field: ColNames.NATIONALITY, filter: true },
+        {
+            field: ColNames.NATIONALITY,
+            filter: true,
+            filterParams: { maxNumConditions: 5 },
+        },
         { field: ColNames.DRIVERREF, filter: true },
-        { field: ColNames.NUMBER },
+        { field: ColNames.NUMBER, filter: true },
         { field: ColNames.DOB, sortable: true, filter: true },
         { field: ColNames.CODE },
     ]);
@@ -50,6 +54,16 @@ export default function AllDrivers() {
     }, [isFilterToggled]);
 
     const fetchData = async () => {
+        let url = "https://localhost:7077/drivers";
+
+        const search = JSON.stringify(gridRef.current?.api?.getFilterModel());
+        console.log("JOE search")
+        console.log(search);
+        if (search !== "{}") {
+            url += `?filter=${search}`;
+        }
+        console.log("JOE")
+        console.log(url);
         const response = await fetch("https://localhost:7077/drivers");
         const data = await response.json();
         const uniqueNations = new Set();
@@ -64,7 +78,7 @@ export default function AllDrivers() {
     const handleFilterChanged = () => {
         if (gridRef.current) {
             const filterModel = gridRef.current.api.getFilterModel();
-            console.log(filterModel)
+            console.log(filterModel);
             setIsFilterToggled(true);
         }
     };

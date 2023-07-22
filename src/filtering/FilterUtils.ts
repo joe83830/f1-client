@@ -45,6 +45,7 @@ export enum ComparatorTypeDate {
 export enum OperatorType {
     AND = "AND",
     OR = "OR",
+    NONE = "NONE"
 }
 
 export interface IFilterModel {
@@ -55,8 +56,14 @@ export interface IFilterModel {
 }
 
 export interface IConsolidatedFilterModel {
-    [ColNames.NATIONALITY]?: IComplexFilter<INationalityFilter>;
-    [ColNames.DOB]?: IComplexFilter<IDobFilter>;
+    [ColNames.NATIONALITY]?: IConsolidatedComplexFilter<INationalityFilter>;
+    [ColNames.DOB]?: IConsolidatedComplexFilter<IDobFilter>;
+}
+
+export interface IConsolidatedComplexFilter<T> {
+    filterType: FilterType;
+    operator: OperatorType;
+    conditions: T[];
 }
 
 export interface IComplexFilter<T> {

@@ -6,20 +6,28 @@ import "/styles/Drivers.scss";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { ColNames } from "../constants/ColNames";
-import { IConsolidatedFilterModel, IFilterModel, isComplexFilter } from "../utils/FilterUtils";
+import {
+    IConsolidatedComplexFilter,
+    IConsolidatedFilterModel,
+    IDobFilter,
+    IFilterModel,
+    INationalityFilter,
+    OperatorType,
+    isComplexFilter,
+} from "../filtering/FilterUtils";
 
 export default function AllDrivers() {
     const gridRef = useRef<AgGridReact>(null);
 
     const [driversData, setDriversData] = useState([]);
-    const [activeFilter, setActiveFilter] = useState<IFilterModel>();
+    const [activeFilter, setActiveFilter] = useState<IConsolidatedFilterModel>();
 
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: ColNames.FORNAME },
         { field: ColNames.SURNAME },
         {
             field: ColNames.NATIONALITY,
-            filter: true,
+            // filter: true,
             filterParams: { maxNumConditions: 5 },
         },
         { field: ColNames.DRIVERREF, filter: true },
@@ -73,24 +81,76 @@ export default function AllDrivers() {
 
     const handleFilterChanged = () => {
         if (gridRef.current) {
-            const filterModel: IFilterModel = gridRef.current.api.getFilterModel();
+            const filterModel: IFilterModel =
+                gridRef.current.api.getFilterModel();
             console.log("JOE Handle Filter Changed");
 
             console.log(filterModel);
             const consolidatedFilter: IConsolidatedFilterModel = {};
 
-            Object.entries(filterModel).forEach(([key, value]) => {
-                const filterKey = key as keyof IFilterModel;
-                let filterValue = value;
-                if (!isComplexFilter(value)) {
-                    // If the filter is not complex, we need to wrap it and make it complex
-                    // This is a bad way of doing it, it is not very type safe
-                    // Instead, loop through ColNames and check if the filterKey is in there, then cast the value to the correct type
-                }
-                consolidatedFilter[filterKey] = filterValue;
-            });
+            for (let key of Object.values(ColNames)) {
+                const filterkey = key as keyof IFilterModel;
+                if (filterkey in filterModel) {
+                    switch (filterkey) {
+                        case ColNames.NATIONALITY:
+                            const nationalityFilterVal = filterModel[filterkey];
+                            let consolidatedNationalityFilterVal: IConsolidatedComplexFilter<INationalityFilter>;
 
-            setActiveFilter(filterModel);
+                            if (!!nationalityFilterVal) {
+                                if (
+                                    !isComplexFilter<INationalityFilter>(
+                                        nationalityFilterVal
+                                    )
+                                ) {
+                                    consolidatedNationalityFilterVal = {
+                                        filterType:
+                                            nationalityFilterVal.filterType,
+                                        operator: OperatorType.NONE,
+                                        conditions: [nationalityFilterVal],
+                                    };
+                                } else {
+                                    consolidatedNationalityFilterVal = {
+                                        filterType:
+                                            nationalityFilterVal.filterType,
+                                        operator: nationalityFilterVal.operator,
+                                        conditions:
+                                            nationalityFilterVal.conditions,
+                                    };
+                                }
+                                consolidatedFilter[filterkey] =
+                                    consolidatedNationalityFilterVal;
+                            }
+
+                            break;
+                        case ColNames.DOB:
+                            const dobFilterVal = filterModel[filterkey];
+                            let consolidatedDobFilterVal: IConsolidatedComplexFilter<IDobFilter>;
+
+                            if (!!dobFilterVal) {
+                                if (
+                                    !isComplexFilter<IDobFilter>(dobFilterVal)
+                                ) {
+                                    consolidatedDobFilterVal = {
+                                        filterType: dobFilterVal.filterType,
+                                        operator: OperatorType.NONE,
+                                        conditions: [dobFilterVal],
+                                    };
+                                } else {
+                                    consolidatedDobFilterVal = {
+                                        filterType: dobFilterVal.filterType,
+                                        operator: dobFilterVal.operator,
+                                        conditions: dobFilterVal.conditions,
+                                    };
+                                }
+                                consolidatedFilter[filterkey] =
+                                    consolidatedDobFilterVal;
+                            }
+                            break;
+                    }
+                }
+            }
+
+            setActiveFilter(consolidatedFilter);
         }
     };
 

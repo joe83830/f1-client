@@ -6,13 +6,13 @@ import "/styles/Drivers.scss";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { ColNames } from "../constants/ColNames";
+import { IConsolidatedFilterModel, IFilterModel, isComplexFilter } from "../utils/FilterUtils";
 
 export default function AllDrivers() {
     const gridRef = useRef<AgGridReact>(null);
-    const isFirstLoad = useRef(true);
 
     const [driversData, setDriversData] = useState([]);
-    const [isFilterToggled, setIsFilterToggled] = useState(false);
+    const [activeFilter, setActiveFilter] = useState<IFilterModel>();
 
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         { field: ColNames.FORNAME },
@@ -31,40 +31,36 @@ export default function AllDrivers() {
     useEffect(() => {
         let isMounted = true;
 
-        if (isFirstLoad.current || isFilterToggled) {
-            fetchData()
-                .then((data) => {
-                    if (isMounted) {
-                        setDriversData(data);
-                        isFirstLoad.current = false;
-                    }
-                })
-                .catch((error) => {
-                    alert("Error fetching data, maybe the server is down?");
-                    console.log(error);
-                })
-                .finally(() => {
-                    isFilterToggled && setIsFilterToggled(false);
-                });
-        }
+        fetchData()
+            .then((data) => {
+                if (isMounted) {
+                    setDriversData(data);
+                }
+            })
+            .catch((error) => {
+                alert("Error fetching data, maybe the server is down?");
+                console.log(error);
+            });
 
         return () => {
             isMounted = false;
         };
-    }, [isFilterToggled]);
+    }, [activeFilter]);
 
     const fetchData = async () => {
+        console.log("JOE FETCH");
         let url = "https://localhost:7077/drivers";
 
-        const search = JSON.stringify(gridRef.current?.api?.getFilterModel());
-        console.log("JOE search")
-        console.log(search);
-        if (search !== "{}") {
-            url += `?filter=${search}`;
+        console.log("JOE activeFilter");
+        console.log(activeFilter);
+
+        const filterQuery = JSON.stringify(activeFilter);
+        if (!!filterQuery && filterQuery !== "{}") {
+            url += `?filter=${filterQuery}`;
         }
-        console.log("JOE")
+        console.log("JOE url");
         console.log(url);
-        const response = await fetch("https://localhost:7077/drivers");
+        const response = await fetch(url);
         const data = await response.json();
         const uniqueNations = new Set();
         data.forEach((driver: any) => {
@@ -77,9 +73,24 @@ export default function AllDrivers() {
 
     const handleFilterChanged = () => {
         if (gridRef.current) {
-            const filterModel = gridRef.current.api.getFilterModel();
+            const filterModel: IFilterModel = gridRef.current.api.getFilterModel();
+            console.log("JOE Handle Filter Changed");
+
             console.log(filterModel);
-            setIsFilterToggled(true);
+            const consolidatedFilter: IConsolidatedFilterModel = {};
+
+            Object.entries(filterModel).forEach(([key, value]) => {
+                const filterKey = key as keyof IFilterModel;
+                let filterValue = value;
+                if (!isComplexFilter(value)) {
+                    // If the filter is not complex, we need to wrap it and make it complex
+                    // This is a bad way of doing it, it is not very type safe
+                    // Instead, loop through ColNames and check if the filterKey is in there, then cast the value to the correct type
+                }
+                consolidatedFilter[filterKey] = filterValue;
+            });
+
+            setActiveFilter(filterModel);
         }
     };
 

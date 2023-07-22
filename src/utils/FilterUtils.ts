@@ -1,5 +1,7 @@
 import { ColNames } from "../constants/ColNames";
 
+// File is not really used rn
+
 export enum FilterType {
     TEXT = "text",
     NUMBER = "number",
@@ -52,6 +54,11 @@ export interface IFilterModel {
     [ColNames.DOB]?: IDobFilter | IComplexFilter<IDobFilter>;
 }
 
+export interface IConsolidatedFilterModel {
+    [ColNames.NATIONALITY]?: IComplexFilter<INationalityFilter>;
+    [ColNames.DOB]?: IComplexFilter<IDobFilter>;
+}
+
 export interface IComplexFilter<T> {
     filterType: FilterType;
     operator: OperatorType;
@@ -72,7 +79,7 @@ export interface INationalityFilter {
     filter: string;
 }
 
-function isComplexFilter<T>(
+export function isComplexFilter<T>(
     filter: T | IComplexFilter<T>
 ): filter is IComplexFilter<T> {
     return (filter as IComplexFilter<T>).operator !== undefined;

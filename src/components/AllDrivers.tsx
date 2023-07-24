@@ -27,7 +27,7 @@ export default function AllDrivers() {
         { field: ColNames.SURNAME },
         {
             field: ColNames.NATIONALITY,
-            // filter: true,
+            filter: true,
             filterParams: { maxNumConditions: 5 },
         },
         { field: ColNames.DRIVERREF, filter: true },

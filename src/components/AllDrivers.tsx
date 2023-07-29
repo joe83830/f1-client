@@ -14,21 +14,38 @@ import {
     INationalityFilter,
     OperatorType,
     isComplexFilter,
-} from "../filtering/FilterUtils";
+} from "../utils/FilterUtils";
+import NationalityFilter, { TCustomFilterParams } from "./filters/NationalityFilter";
+
+interface IDriverRowData {
+    [ColNames.FORNAME]: string;
+    [ColNames.SURNAME]: string;
+    [ColNames.DOB]: Date;
+    [ColNames.NATIONALITY]: string;
+    [ColNames.DRIVERREF]: string;
+    [ColNames.NUMBER]: number;
+    [ColNames.CODE]: string;
+}
+
 
 export default function AllDrivers() {
-    const gridRef = useRef<AgGridReact>(null);
+    const gridRef = useRef<AgGridReact<IDriverRowData>>(null);
 
     const [driversData, setDriversData] = useState([]);
-    const [activeFilter, setActiveFilter] = useState<IConsolidatedFilterModel>();
+    const [activeFilter, setActiveFilter] =
+        useState<IConsolidatedFilterModel>();
 
-    const [columnDefs, setColumnDefs] = useState<ColDef[]>([
+    const [columnDefs, _] = useState<ColDef<IDriverRowData>[]>([
         { field: ColNames.FORNAME },
         { field: ColNames.SURNAME },
         {
             field: ColNames.NATIONALITY,
-            filter: true,
-            filterParams: { maxNumConditions: 5 },
+            filter: NationalityFilter,
+            filterParams: {
+                maxNumConditions: 5,
+                setActiveFilter: setActiveFilter,
+                curActiveFilter: activeFilter
+            } as TCustomFilterParams,
         },
         { field: ColNames.DRIVERREF, filter: true },
         { field: ColNames.NUMBER, filter: true },
@@ -156,7 +173,7 @@ export default function AllDrivers() {
 
     return (
         <div className="ag-theme-alpine grid-container">
-            <AgGridReact
+            <AgGridReact<IDriverRowData>
                 ref={gridRef}
                 className="inner-grid"
                 rowData={driversData}

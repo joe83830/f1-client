@@ -11,13 +11,15 @@ import {
     IConsolidatedFilterModel,
     IDobFilter,
     IFilterModel,
-    INationalityFilter,
+    ICustomTextFilter,
     OperatorType,
     isComplexFilter,
 } from "../utils/FilterUtils";
-import NationalityFilter, { TCustomFilterParams } from "./filters/NationalityFilter";
+import CustomTextFilter, {
+    TCustomFilterParams,
+} from "./filters/CustomTextFilter";
 
-interface IDriverRowData {
+export interface IDriverRowData {
     [ColNames.FORNAME]: string;
     [ColNames.SURNAME]: string;
     [ColNames.DOB]: Date;
@@ -27,6 +29,11 @@ interface IDriverRowData {
     [ColNames.CODE]: string;
 }
 
+// interface IStrongColDef<T> extends ColDef<T> {
+//     field: string;
+// }
+
+type TStrongColDef = ColDef<IDriverRowData> & { field: string };
 
 export default function AllDrivers() {
     const gridRef = useRef<AgGridReact<IDriverRowData>>(null);
@@ -35,16 +42,17 @@ export default function AllDrivers() {
     const [activeFilter, setActiveFilter] =
         useState<IConsolidatedFilterModel>();
 
-    const [columnDefs, _] = useState<ColDef<IDriverRowData>[]>([
+    const [columnDefs, _] = useState<TStrongColDef[]>([
         { field: ColNames.FORNAME },
         { field: ColNames.SURNAME },
         {
             field: ColNames.NATIONALITY,
-            filter: NationalityFilter,
+            filter: CustomTextFilter,
             filterParams: {
                 maxNumConditions: 5,
                 setActiveFilter: setActiveFilter,
-                curActiveFilter: activeFilter
+                curActiveFilter: activeFilter,
+                fieldName: ColNames.NATIONALITY
             } as TCustomFilterParams,
         },
         { field: ColNames.DRIVERREF, filter: true },
@@ -64,7 +72,7 @@ export default function AllDrivers() {
             })
             .catch((error) => {
                 alert("Error fetching data, maybe the server is down?");
-                console.log(error);
+                console.error(error);
             });
 
         return () => {
@@ -73,7 +81,6 @@ export default function AllDrivers() {
     }, [activeFilter]);
 
     const fetchData = async () => {
-        console.log("JOE FETCH");
         let url = "https://localhost:7077/drivers";
 
         console.log("JOE activeFilter");
@@ -100,9 +107,6 @@ export default function AllDrivers() {
         if (gridRef.current) {
             const filterModel: IFilterModel =
                 gridRef.current.api.getFilterModel();
-            console.log("JOE Handle Filter Changed");
-
-            console.log(filterModel);
             const consolidatedFilter: IConsolidatedFilterModel = {};
 
             for (let key of Object.values(ColNames)) {
@@ -111,11 +115,11 @@ export default function AllDrivers() {
                     switch (filterkey) {
                         case ColNames.NATIONALITY:
                             const nationalityFilterVal = filterModel[filterkey];
-                            let consolidatedNationalityFilterVal: IConsolidatedComplexFilter<INationalityFilter>;
+                            let consolidatedNationalityFilterVal: IConsolidatedComplexFilter<ICustomTextFilter>;
 
                             if (!!nationalityFilterVal) {
                                 if (
-                                    !isComplexFilter<INationalityFilter>(
+                                    !isComplexFilter<ICustomTextFilter>(
                                         nationalityFilterVal
                                     )
                                 ) {

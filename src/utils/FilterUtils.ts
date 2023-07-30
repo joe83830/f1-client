@@ -50,13 +50,13 @@ export enum OperatorType {
 
 export interface IFilterModel {
     [ColNames.NATIONALITY]?:
-        | INationalityFilter
-        | IComplexFilter<INationalityFilter>;
+        | ICustomTextFilter
+        | IComplexFilter<ICustomTextFilter>;
     [ColNames.DOB]?: IDobFilter | IComplexFilter<IDobFilter>;
 }
 
 export interface IConsolidatedFilterModel {
-    [ColNames.NATIONALITY]?: IConsolidatedComplexFilter<INationalityFilter>;
+    [ColNames.NATIONALITY]?: IConsolidatedComplexFilter<ICustomTextFilter>;
     [ColNames.DOB]?: IConsolidatedComplexFilter<IDobFilter>;
 }
 
@@ -80,7 +80,7 @@ export interface IDobFilter {
     type: ComparatorTypeDate;
 }
 
-export interface INationalityFilter {
+export interface ICustomTextFilter {
     filterType: FilterType;
     type: ComparatorTypeString;
     filter: string;
@@ -166,8 +166,8 @@ export function dateFilterQueryString(
 
 export function nationalityFilterQueryString(
     nationalityFilter:
-        | INationalityFilter
-        | IComplexFilter<INationalityFilter>
+        | ICustomTextFilter
+        | IComplexFilter<ICustomTextFilter>
         | undefined
 ): string {
     if (!nationalityFilter) {

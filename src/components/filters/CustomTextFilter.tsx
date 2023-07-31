@@ -1,6 +1,4 @@
 import React, {
-    Dispatch,
-    SetStateAction,
     forwardRef,
     useCallback,
     useEffect,
@@ -196,7 +194,7 @@ export default forwardRef((props: TCustomFilterParams, ref) => {
                 </FormControl>
                 {filterObjects.map((filterObject, index) => {
                     return (
-                        <div>
+                        <div key={index}>
                             <TextField
                                 id="outlined-controlled"
                                 value={filterObject.filter}

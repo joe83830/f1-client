@@ -6,15 +6,6 @@ import "/styles/Drivers.scss";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { ColNames } from "../constants/ColNames";
-import {
-    IConsolidatedComplexFilter,
-    IConsolidatedFilterModel,
-    IDobFilter,
-    IFilterModel,
-    ICustomTextFilter,
-    OperatorType,
-    isComplexFilter,
-} from "../utils/FilterUtils";
 import CustomTextFilter, {
     TCustomFilterParams,
 } from "./filters/CustomTextFilter";
@@ -139,78 +130,6 @@ export default function AllDrivers() {
         return data;
     };
 
-    const handleFilterChanged = () => {
-        if (gridRef.current) {
-            const filterModel: IFilterModel =
-                gridRef.current.api.getFilterModel();
-            const consolidatedFilter: IConsolidatedFilterModel = {};
-
-            for (let key of Object.values(ColNames)) {
-                const filterkey = key as keyof IFilterModel;
-                if (filterkey in filterModel) {
-                    switch (filterkey) {
-                        case ColNames.NATIONALITY:
-                            const nationalityFilterVal = filterModel[filterkey];
-                            let consolidatedNationalityFilterVal: IConsolidatedComplexFilter<ICustomTextFilter>;
-
-                            if (!!nationalityFilterVal) {
-                                if (
-                                    !isComplexFilter<ICustomTextFilter>(
-                                        nationalityFilterVal
-                                    )
-                                ) {
-                                    consolidatedNationalityFilterVal = {
-                                        filterType:
-                                            nationalityFilterVal.filterType,
-                                        operator: OperatorType.NONE,
-                                        conditions: [nationalityFilterVal],
-                                    };
-                                } else {
-                                    consolidatedNationalityFilterVal = {
-                                        filterType:
-                                            nationalityFilterVal.filterType,
-                                        operator: nationalityFilterVal.operator,
-                                        conditions:
-                                            nationalityFilterVal.conditions,
-                                    };
-                                }
-                                consolidatedFilter[filterkey] =
-                                    consolidatedNationalityFilterVal;
-                            }
-
-                            break;
-                        case ColNames.DOB:
-                            const dobFilterVal = filterModel[filterkey];
-                            let consolidatedDobFilterVal: IConsolidatedComplexFilter<IDobFilter>;
-
-                            if (!!dobFilterVal) {
-                                if (
-                                    !isComplexFilter<IDobFilter>(dobFilterVal)
-                                ) {
-                                    consolidatedDobFilterVal = {
-                                        filterType: dobFilterVal.filterType,
-                                        operator: OperatorType.NONE,
-                                        conditions: [dobFilterVal],
-                                    };
-                                } else {
-                                    consolidatedDobFilterVal = {
-                                        filterType: dobFilterVal.filterType,
-                                        operator: dobFilterVal.operator,
-                                        conditions: dobFilterVal.conditions,
-                                    };
-                                }
-                                consolidatedFilter[filterkey] =
-                                    consolidatedDobFilterVal;
-                            }
-                            break;
-                    }
-                }
-            }
-
-            setActiveFilter(consolidatedFilter);
-        }
-    };
-
     return (
         <div className="ag-theme-alpine grid-container">
             <AgGridReact<IDriverRowData>
@@ -218,7 +137,6 @@ export default function AllDrivers() {
                 className="inner-grid"
                 rowData={driversData}
                 columnDefs={columnDefs}
-                onFilterChanged={handleFilterChanged}
             ></AgGridReact>
         </div>
     );

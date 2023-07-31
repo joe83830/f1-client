@@ -1,6 +1,6 @@
 import { AgGridReact } from "ag-grid-react";
 import { ColDef } from "ag-grid-community";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, createContext } from "react";
 import "/styles/Drivers.scss";
 
 import "ag-grid-community/styles/ag-grid.css";
@@ -18,6 +18,8 @@ import {
 import CustomTextFilter, {
     TCustomFilterParams,
 } from "./filters/CustomTextFilter";
+import { useHistory, useLocation } from "react-router-dom";
+import { useFilterContext } from "./providers/FilterProvider";
 
 export interface IDriverRowData {
     [ColNames.FORNAME]: string;
@@ -29,19 +31,20 @@ export interface IDriverRowData {
     [ColNames.CODE]: string;
 }
 
-// interface IStrongColDef<T> extends ColDef<T> {
-//     field: string;
-// }
-
 type TStrongColDef = ColDef<IDriverRowData> & { field: string };
 
 export default function AllDrivers() {
     const gridRef = useRef<AgGridReact<IDriverRowData>>(null);
-
     const [driversData, setDriversData] = useState([]);
-    const [activeFilter, setActiveFilter] =
-        useState<IConsolidatedFilterModel>();
+    const location = useLocation();
+    const history = useHistory();
+    const filterContext = useFilterContext();
+    if (!filterContext)
+        throw new Error(
+            "Filter context is undefined, did you forget to wrap your component in FilterProvider?"
+        );
 
+    const { activeFilter, setActiveFilter } = filterContext;
     const [columnDefs, _] = useState<TStrongColDef[]>([
         { field: ColNames.FORNAME },
         { field: ColNames.SURNAME },
@@ -50,9 +53,7 @@ export default function AllDrivers() {
             filter: CustomTextFilter,
             filterParams: {
                 maxNumConditions: 5,
-                setActiveFilter: setActiveFilter,
-                curActiveFilter: activeFilter,
-                fieldName: ColNames.NATIONALITY
+                fieldName: ColNames.NATIONALITY,
             } as TCustomFilterParams,
         },
         { field: ColNames.DRIVERREF, filter: true },
@@ -62,8 +63,46 @@ export default function AllDrivers() {
     ]);
 
     useEffect(() => {
-        let isMounted = true;
+        const filterFromUrl = new URLSearchParams(location.search).get(
+            "filter"
+        );
+        if (filterFromUrl) {
+            try {
+                const parsedFilter = JSON.parse(filterFromUrl);
+                setActiveFilter(parsedFilter);
+            } catch (err) {
+                console.error("Invalid filter query parameter:", err);
+            }
+        }
+    }, []);
 
+    useEffect(() => {
+        const serializedFilter = JSON.stringify(activeFilter);
+        const filterFromUrl = new URLSearchParams(location.search).get(
+            "filter"
+        );
+
+        const newFilterIsTruthy =
+            !!serializedFilter && serializedFilter !== "{}";
+
+        const filterModified =
+            newFilterIsTruthy && serializedFilter !== filterFromUrl;
+
+        const filterRemoved = !newFilterIsTruthy && !!filterFromUrl;
+
+        if (filterModified || filterRemoved) {
+            const newFilterUrl = newFilterIsTruthy
+                ? `?filter=${serializedFilter}`
+                : "";
+            history.push({
+                pathname: location.pathname,
+                search: newFilterUrl,
+            });
+        }
+    }, [activeFilter, history, location]);
+
+    useEffect(() => {
+        let isMounted = true;
         fetchData()
             .then((data) => {
                 if (isMounted) {
@@ -83,15 +122,12 @@ export default function AllDrivers() {
     const fetchData = async () => {
         let url = "https://localhost:7077/drivers";
 
-        console.log("JOE activeFilter");
-        console.log(activeFilter);
-
         const filterQuery = JSON.stringify(activeFilter);
         if (!!filterQuery && filterQuery !== "{}") {
             url += `?filter=${filterQuery}`;
         }
-        console.log("JOE url");
-        console.log(url);
+        console.log("JOE url = ", url);
+
         const response = await fetch(url);
         const data = await response.json();
         const uniqueNations = new Set();

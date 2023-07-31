@@ -1,9 +1,15 @@
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Redirect,
+} from "react-router-dom";
 import AllDrivers from "./components/AllDrivers";
 import "./styles/App.scss";
 import Nav from "./components/Nav";
 import DriverSearch from "./components/DriverSearch";
 import Races from "./components/Races";
+import { FilterProvider } from "./components/providers/FilterProvider";
 
 export default function Application() {
     return (
@@ -13,7 +19,9 @@ export default function Application() {
                     <Nav />
                     <Switch>
                         <Route exact path="/all-drivers">
-                            <AllDrivers />
+                            <FilterProvider>
+                                <AllDrivers />
+                            </FilterProvider>
                         </Route>
                         <Route exact path="/driver-search">
                             <DriverSearch />

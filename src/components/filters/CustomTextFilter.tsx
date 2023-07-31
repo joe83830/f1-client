@@ -24,25 +24,29 @@ import {
     Button,
     FormControl,
     FormControlLabel,
-    FormLabel,
     Radio,
     RadioGroup,
     TextField,
 } from "@mui/material";
 import { IDriverRowData } from "../AllDrivers";
+import { useFilterContext } from "../providers/FilterProvider";
 
 export interface IMyFilterParams {
-    setActiveFilter: Dispatch<
-        SetStateAction<IConsolidatedFilterModel | undefined>
-    >;
-    curActiveFilter: IConsolidatedFilterModel | undefined;
     maxNumConditions: number;
     fieldName: ColNames;
 }
 
-export type TCustomFilterParams = IFilterParams<IDriverRowData> & IMyFilterParams;
+export type TCustomFilterParams = IFilterParams<IDriverRowData> &
+    IMyFilterParams;
 
 export default forwardRef((props: TCustomFilterParams, ref) => {
+    const filterContext = useFilterContext();
+    if (!filterContext)
+        throw new Error(
+            "Filter context is undefined, did you forget to wrap your component in FilterProvider?"
+        );
+
+    const { activeFilter, setActiveFilter } = filterContext;
     const [filterObjects, setFilterObjects] = useState<ICustomTextFilter[]>([
         {
             filterType: FilterType.TEXT,
@@ -53,6 +57,17 @@ export default forwardRef((props: TCustomFilterParams, ref) => {
     const [joinOperator, setJoinOperator] = useState<OperatorType>(
         OperatorType.AND
     );
+
+    useEffect(() => {
+        if (!!activeFilter) {
+            const initialFilterObj =
+                activeFilter[props.fieldName as ColNames.NATIONALITY];
+            if (!!initialFilterObj) {
+                setFilterObjects(initialFilterObj.conditions);
+                setJoinOperator(initialFilterObj.operator);
+            }
+        }
+    }, []);
 
     useImperativeHandle(ref, () => {
         return {
@@ -86,14 +101,16 @@ export default forwardRef((props: TCustomFilterParams, ref) => {
                 const nonEmptyFilterObjs = filterObjs.filter(
                     (filterobj) => filterobj.filter !== ""
                 );
-                console.log("JOE nonEmptyFilterObjs", nonEmptyFilterObjs);
+
                 if (nonEmptyFilterObjs.length === 0) {
-                    if (!!props.curActiveFilter) {
-                        const newFilter = { ...props.curActiveFilter };
-                        delete newFilter[props.fieldName as ColNames.NATIONALITY];
-                        props.setActiveFilter(newFilter);
+                    if (!!activeFilter) {
+                        const newFilter = { ...activeFilter };
+                        delete newFilter[
+                            props.fieldName as ColNames.NATIONALITY
+                        ];
+                        setActiveFilter(newFilter);
                     } else {
-                        props.setActiveFilter(undefined);
+                        setActiveFilter(undefined);
                     }
                     return;
                 }
@@ -109,15 +126,14 @@ export default forwardRef((props: TCustomFilterParams, ref) => {
                     [props.fieldName]: additionalFilter,
                 };
 
-                if (!!props.curActiveFilter) {
-                    newFilter = Object.assign(props.curActiveFilter, newFilter);
+                if (!!activeFilter) {
+                    newFilter = { ...activeFilter, ...newFilter };
                 }
-
-                props.setActiveFilter(newFilter);
+                setActiveFilter(newFilter);
             },
             500
         ),
-        []
+        [activeFilter]
     );
 
     useEffect(() => {

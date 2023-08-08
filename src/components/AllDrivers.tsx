@@ -35,7 +35,9 @@ export default function AllDrivers() {
             "Filter context is undefined, did you forget to wrap your component in FilterProvider?"
         );
 
-    const { activeFilter, setActiveFilter } = filterContext;
+    const { finalizedActiveFilter, setFinalizedActiveFilter } =
+        filterContext;
+
     const [columnDefs, _] = useState<TStrongColDef[]>([
         { field: ColNames.FORNAME },
         { field: ColNames.SURNAME },
@@ -60,7 +62,7 @@ export default function AllDrivers() {
         if (filterFromUrl) {
             try {
                 const parsedFilter = JSON.parse(filterFromUrl);
-                setActiveFilter(parsedFilter);
+                setFinalizedActiveFilter(parsedFilter);
             } catch (err) {
                 console.error("Invalid filter query parameter:", err);
             }
@@ -68,7 +70,7 @@ export default function AllDrivers() {
     }, []);
 
     useEffect(() => {
-        const serializedFilter = JSON.stringify(activeFilter);
+        const serializedFilter = JSON.stringify(finalizedActiveFilter);
         const filterFromUrl = new URLSearchParams(location.search).get(
             "filter"
         );
@@ -90,7 +92,7 @@ export default function AllDrivers() {
                 search: newFilterUrl,
             });
         }
-    }, [activeFilter, history, location]);
+    }, [finalizedActiveFilter, history, location]);
 
     useEffect(() => {
         let isMounted = true;
@@ -108,12 +110,12 @@ export default function AllDrivers() {
         return () => {
             isMounted = false;
         };
-    }, [activeFilter]);
+    }, [finalizedActiveFilter]);
 
     const fetchData = async () => {
         let url = "https://localhost:7077/drivers";
 
-        const filterQuery = JSON.stringify(activeFilter);
+        const filterQuery = JSON.stringify(finalizedActiveFilter);
         if (!!filterQuery && filterQuery !== "{}") {
             url += `?filter=${filterQuery}`;
         }

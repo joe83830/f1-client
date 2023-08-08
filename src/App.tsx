@@ -10,6 +10,7 @@ import Nav from "./components/Nav";
 import DriverSearch from "./components/DriverSearch";
 import Races from "./components/Races";
 import { FilterProvider } from "./components/providers/FilterProvider";
+import PivotTable from "./components/PivotTable";
 
 export default function Application() {
     return (
@@ -17,20 +18,21 @@ export default function Application() {
             <div className="app">
                 <div className="content-container">
                     <Nav />
-                    <Switch>
-                        <Route exact path="/all-drivers">
-                            <FilterProvider>
+                    <FilterProvider>
+                        <Switch>
+                            <Route exact path="/all-drivers">
                                 <AllDrivers />
-                            </FilterProvider>
-                        </Route>
-                        <Route exact path="/driver-search">
-                            <DriverSearch />
-                        </Route>
-                        <Route exact path="/races">
-                            <Races />
-                        </Route>
-                        <Redirect to="/all-drivers" />
-                    </Switch>
+                            </Route>
+                            <Route exact path="/driver-search">
+                                <DriverSearch />
+                            </Route>
+                            <Route exact path="/races">
+                                <Races />
+                            </Route>
+                            <Redirect to="/all-drivers" />
+                        </Switch>
+                        <PivotTable />
+                    </FilterProvider>
                 </div>
             </div>
         </Router>

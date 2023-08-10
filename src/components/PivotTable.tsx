@@ -82,7 +82,17 @@ export default function PivotTable() {
                 <Divider />
                 <List>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        <ListItemButton
+                            sx={{
+                                "&:hover": {
+                                    cursor: "default",
+                                    backgroundColor: "transparent",
+                                },
+                                "&:active": {
+                                    backgroundColor: "transparent",
+                                },
+                            }}
+                        >
                             <ListItemIcon>
                                 <FilterAltIcon />
                             </ListItemIcon>
@@ -94,7 +104,17 @@ export default function PivotTable() {
                 </List>
                 <List>
                     <ListItem disablePadding>
-                        <ListItemButton>
+                        <ListItemButton
+                            sx={{
+                                "&:hover": {
+                                    cursor: "default",
+                                    backgroundColor: "transparent",
+                                },
+                                "&:active": {
+                                    backgroundColor: "transparent",
+                                },
+                            }}
+                        >
                             <ListItemIcon>
                                 <PivotTableChartIcon />
                             </ListItemIcon>
@@ -109,7 +129,7 @@ export default function PivotTable() {
                     color="primary"
                     sx={{ margin: 2 }}
                     onClick={searchCallback}
-                    size="small"
+                    // size="small"
                 >
                     Search
                 </Button>

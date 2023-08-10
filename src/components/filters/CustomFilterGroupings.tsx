@@ -17,7 +17,11 @@ export const CustomFilterGroupings = () => {
     return (
         <div>
             {(availableFilters || []).map((filter, index) => (
-                <Accordion key={index} disableGutters>
+                <Accordion key={index} disableGutters sx={{
+                    "&:last-of-type": {
+                        "border-radius": 0
+                    }
+                }}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={`panel${index}-content`}

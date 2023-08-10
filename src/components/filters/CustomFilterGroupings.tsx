@@ -17,13 +17,13 @@ export const CustomFilterGroupings = () => {
     return (
         <div>
             {(availableFilters || []).map((filter, index) => (
-                <Accordion key={index}>
+                <Accordion key={index} disableGutters>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls={`panel${index}-content`}
                         id={`panel${index}-header`}
                     >
-                        <Typography>{filter}</Typography>
+                        <Typography textTransform={'capitalize'}>{filter}</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                         <CustomStandlanoneTextFilter fieldName={filter} />

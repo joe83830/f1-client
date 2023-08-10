@@ -11,7 +11,6 @@ export enum FilterType {
 export enum ComparatorTypeString {
     CONTAINS = "contains",
     NOTCONTAINS = "notContains",
-    GREATERTHAN = "greaterThan",
     EQAULS = "equals",
     NOTEQUAL = "notEqual",
     STARTSWITH = "startsWith",

@@ -1,9 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 import {
-    ComparatorTypeString,
-    FilterType,
     IConsolidatedFilterModel,
-    ICustomTextFilter,
 } from "../../utils/FilterUtils";
 import { ColNames } from "../../constants/ColNames";
 
@@ -35,7 +32,7 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
         setFinalizedActiveFilter(activeFilter);
     };
     // To be replaced by backend call
-    const availableFilters = [ColNames.NATIONALITY, ColNames.FORNAME];
+    const availableFilters = [ColNames.SURNAME, ColNames.FORNAME, ColNames.NATIONALITY, ColNames.CODE];
     const availableAggregates = [] as ColNames[];
 
     return (

@@ -89,9 +89,9 @@ export default function PivotTable() {
                             <ListItemText primary={"Filters"} />
                         </ListItemButton>
                     </ListItem>
+                    <Divider />
                     <CustomFilterGroupings />
                 </List>
-                {/* <Divider /> */}
                 <List>
                     <ListItem disablePadding>
                         <ListItemButton>
@@ -101,6 +101,7 @@ export default function PivotTable() {
                             <ListItemText primary={"Aggregates"} />
                         </ListItemButton>
                     </ListItem>
+                    <Divider />
                 </List>
                 <Button
                     startIcon={<SearchIcon />}
@@ -108,6 +109,7 @@ export default function PivotTable() {
                     color="primary"
                     sx={{ margin: 2 }}
                     onClick={searchCallback}
+                    size="small"
                 >
                     Search
                 </Button>

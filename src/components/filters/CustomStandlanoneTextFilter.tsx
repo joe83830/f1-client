@@ -13,8 +13,12 @@ import {
     Button,
     FormControl,
     FormControlLabel,
+    InputLabel,
+    MenuItem,
     Radio,
     RadioGroup,
+    Select,
+    SelectChangeEvent,
     TextField,
 } from "@mui/material";
 import { useFilterContext } from "../providers/FilterProvider";
@@ -104,6 +108,19 @@ export default function CustomStandaloneTextFilter(
         };
     };
 
+    const handleFilterComparatorChange =
+        (index: number) => (event: SelectChangeEvent) => {
+            const newComparator = event.target.value as ComparatorTypeString;
+            const newFilterObjects = [...filterObjects];
+            const targetFilterObj = { ...newFilterObjects[index] };
+
+            if (newComparator !== targetFilterObj.type) {
+                targetFilterObj.type = newComparator;
+                newFilterObjects[index] = targetFilterObj;
+                setFilterObjects(newFilterObjects);
+            }
+        };
+
     const handleAddCondition = () => {
         setFilterObjects([
             ...filterObjects,
@@ -121,6 +138,25 @@ export default function CustomStandaloneTextFilter(
         setFilterObjects(newFilterObjects);
     };
 
+    const renderFilterBody = (
+        filterObject: ICustomTextFilter,
+        index: number
+    ) => {
+        switch (filterObject.type) {
+            case ComparatorTypeString.BLANK:
+            case ComparatorTypeString.NOTBLANK:
+                return null;
+            default:
+                return (
+                    <TextField
+                        size="small"
+                        id="outlined-controlled"
+                        value={filterObject.filter}
+                        onChange={handleFilterTextChange(index)}
+                    />
+                );
+        }
+    };
     return (
         <div style={{ padding: 4, width: 200 }}>
             <div>
@@ -134,35 +170,55 @@ export default function CustomStandaloneTextFilter(
                     >
                         <FormControlLabel
                             value={OperatorType.AND}
-                            control={<Radio />}
-                            label="AND"
+                            control={<Radio size="small" />}
+                            label="And"
                         />
                         <FormControlLabel
                             value={OperatorType.OR}
-                            control={<Radio />}
-                            label="OR"
+                            control={<Radio size="small" />}
+                            label="Or"
                         />
                     </RadioGroup>
                 </FormControl>
                 {filterObjects.map((filterObject, index) => {
                     return (
                         <div key={index}>
-                            <TextField
-                                id="outlined-controlled"
-                                value={filterObject.filter}
-                                onChange={handleFilterTextChange(index)}
-                            />
+                            <FormControl fullWidth>
+                                <Select
+                                    value={filterObject.type}
+                                    onChange={handleFilterComparatorChange(
+                                        index
+                                    )}
+                                    size="small"
+                                >
+                                    {Object.values(ComparatorTypeString).map(
+                                        (comparator) => (
+                                            <MenuItem value={comparator}>
+                                                {comparator}
+                                            </MenuItem>
+                                        )
+                                    )}
+                                </Select>
+                            </FormControl>
+                            {renderFilterBody(filterObject, index)}
                             <Button
                                 variant="text"
                                 onClick={() => handleRemoveCondition(index)}
                                 color="error"
+                                size="small"
+                                sx={{ textTransform: "capitalize" }}
                             >
                                 - Remove Condition
                             </Button>
                         </div>
                     );
                 })}
-                <Button variant="text" onClick={handleAddCondition}>
+                <Button
+                    variant="text"
+                    onClick={handleAddCondition}
+                    size="small"
+                    sx={{ textTransform: "capitalize" }}
+                >
                     + Add Condition
                 </Button>
             </div>

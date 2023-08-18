@@ -11,6 +11,7 @@ import DriverSearch from "./components/DriverSearch";
 import Races from "./components/Races";
 import { FilterProvider } from "./components/providers/FilterProvider";
 import PivotTable from "./components/PivotTable";
+import { DriverDetails } from "./components/DriverDetails";
 
 export default function Application() {
     return (
@@ -22,6 +23,9 @@ export default function Application() {
                         <Switch>
                             <Route exact path="/all-drivers">
                                 <AllDrivers />
+                            </Route>
+                            <Route exact path="all-drivers/:driverId">
+                                <DriverDetails />
                             </Route>
                             <Route exact path="/driver-search">
                                 <DriverSearch />

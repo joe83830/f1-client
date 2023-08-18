@@ -1,4 +1,5 @@
 export enum ColNames {
+    ID = 'id',
     FORNAME = 'forename',
     SURNAME = 'surname',
     DOB = 'dob',

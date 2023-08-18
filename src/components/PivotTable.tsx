@@ -18,8 +18,7 @@ import { CustomFilterGroupings } from "./filters/CustomFilterGroupings";
 import { useFilterContext } from "./providers/FilterProvider";
 import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";
-
-const drawerWidth = 240;
+import { buttonStyleOverride, drawerStyleOverride } from "../style-overrides/pivotTableStyleOverrides";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
     display: "flex",
@@ -63,13 +62,7 @@ export default function PivotTable() {
                 </CustomIconButton>
             )}
             <Drawer
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    "& .MuiDrawer-paper": {
-                        width: drawerWidth,
-                    },
-                }}
+                sx={drawerStyleOverride}
                 variant="temporary"
                 anchor="right"
                 open={open}
@@ -83,15 +76,7 @@ export default function PivotTable() {
                 <List>
                     <ListItem disablePadding>
                         <ListItemButton
-                            sx={{
-                                "&:hover": {
-                                    cursor: "default",
-                                    backgroundColor: "transparent",
-                                },
-                                "&:active": {
-                                    backgroundColor: "transparent",
-                                },
-                            }}
+                            sx={buttonStyleOverride}
                         >
                             <ListItemIcon>
                                 <FilterAltIcon />
@@ -105,15 +90,7 @@ export default function PivotTable() {
                 <List>
                     <ListItem disablePadding>
                         <ListItemButton
-                            sx={{
-                                "&:hover": {
-                                    cursor: "default",
-                                    backgroundColor: "transparent",
-                                },
-                                "&:active": {
-                                    backgroundColor: "transparent",
-                                },
-                            }}
+                            sx={buttonStyleOverride}
                         >
                             <ListItemIcon>
                                 <PivotTableChartIcon />
@@ -129,7 +106,6 @@ export default function PivotTable() {
                     color="primary"
                     sx={{ margin: 2 }}
                     onClick={searchCallback}
-                    // size="small"
                 >
                     Search
                 </Button>

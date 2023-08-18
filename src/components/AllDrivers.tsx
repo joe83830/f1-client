@@ -11,8 +11,10 @@ import CustomTextFilter, {
 } from "./filters/CustomTextFilter";
 import { useHistory, useLocation } from "react-router-dom";
 import { useFilterContext } from "./providers/FilterProvider";
+import { LinkCellRenderer } from "./custom-cell-renderers/LinkCellRenderer";
 
 export interface IDriverRowData {
+    [ColNames.ID]: number;
     [ColNames.FORNAME]: string;
     [ColNames.SURNAME]: string;
     [ColNames.DOB]: Date;
@@ -35,19 +37,14 @@ export default function AllDrivers() {
             "Filter context is undefined, did you forget to wrap your component in FilterProvider?"
         );
 
-    const { finalizedActiveFilter, setFinalizedActiveFilter } =
-        filterContext;
+    const { finalizedActiveFilter, setFinalizedActiveFilter } = filterContext;
 
     const [columnDefs, _] = useState<TStrongColDef[]>([
+        { field: ColNames.ID, cellRenderer: LinkCellRenderer },
         { field: ColNames.FORNAME },
         { field: ColNames.SURNAME },
         {
             field: ColNames.NATIONALITY,
-            filter: CustomTextFilter,
-            filterParams: {
-                maxNumConditions: 5,
-                fieldName: ColNames.NATIONALITY,
-            } as TCustomFilterParams,
         },
         { field: ColNames.DRIVERREF, filter: true },
         { field: ColNames.NUMBER, filter: true },

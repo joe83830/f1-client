@@ -24,11 +24,8 @@ export default function Application() {
                             <Route exact path="/all-drivers">
                                 <AllDrivers />
                             </Route>
-                            <Route exact path="all-drivers/:driverId">
+                            <Route exact path="/all-drivers/:driverId">
                                 <DriverDetails />
-                            </Route>
-                            <Route exact path="/driver-search">
-                                <DriverSearch />
                             </Route>
                             <Route exact path="/races">
                                 <Races />

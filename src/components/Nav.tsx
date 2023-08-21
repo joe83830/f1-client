@@ -22,7 +22,7 @@ const Nav = () => {
     
 
     return (
-        <List component="nav">
+        <List component="nav" sx={{paddingTop: 0}}>
             <ListItemButton onClick={() => handleItemClick("/all-drivers")}>
                 <ListItemText 
                     primary="All Drivers" 

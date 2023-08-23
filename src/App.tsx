@@ -17,24 +17,22 @@ export default function Application() {
     return (
         <Router>
             <div className="app">
-                <div className="content-container">
-                    <Nav />
-                    <FilterProvider>
-                        <Switch>
-                            <Route exact path="/all-drivers">
-                                <AllDrivers />
-                            </Route>
-                            <Route exact path="/all-drivers/:driverId">
-                                <DriverDetails />
-                            </Route>
-                            <Route exact path="/races">
-                                <Races />
-                            </Route>
-                            <Redirect to="/all-drivers" />
-                        </Switch>
-                        <PivotTable />
-                    </FilterProvider>
-                </div>
+                <Nav />
+                <FilterProvider>
+                    <Switch>
+                        <Route exact path="/all-drivers">
+                            <AllDrivers />
+                            <PivotTable />
+                        </Route>
+                        <Route exact path="/all-drivers/:driverId">
+                            <DriverDetails />
+                        </Route>
+                        <Route exact path="/races">
+                            <Races />
+                        </Route>
+                        <Redirect to="/all-drivers" />
+                    </Switch>
+                </FilterProvider>
             </div>
         </Router>
     );

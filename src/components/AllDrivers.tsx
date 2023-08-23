@@ -6,9 +6,6 @@ import "/styles/Drivers.scss";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { ColNames } from "../constants/ColNames";
-import CustomTextFilter, {
-    TCustomFilterParams,
-} from "./filters/CustomTextFilter";
 import { useHistory, useLocation } from "react-router-dom";
 import { useFilterContext } from "./providers/FilterProvider";
 import { LinkCellRenderer } from "./custom-cell-renderers/LinkCellRenderer";

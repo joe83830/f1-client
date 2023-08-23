@@ -25,7 +25,7 @@ const Nav = () => {
         <div className="nav-container">
             <List
                 component="nav"
-                sx={{ paddingTop: 0, backgroundColor: "WhiteSmoke", height: "100%" }}
+                sx={{ paddingTop: 0, backgroundColor: "WhiteSmoke", height: "100%", padding: "1rem 1rem" }}
             >
                 <ListItemButton onClick={() => handleItemClick("/all-drivers")}>
                     <ListItemText

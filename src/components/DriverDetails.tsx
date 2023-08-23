@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import React from "react";
+import React, { useState } from "react";
 import {
     Accordion,
     AccordionSummary,
@@ -45,43 +45,64 @@ function ExpandableRows() {
     };
 
     return (
-        <div style={{ width: '100%' }}>
+        <div style={{ width: "100%" }}>
+            <SingleExpandableRow
+                chartOptions={chartOptions}
+                rowData={rowData}
+            />
+        </div>
+    );
+}
+
+interface ISingleExpandableRowProps {
+    chartOptions: any;
+    rowData: any;
+}
+
+function SingleExpandableRow(props: ISingleExpandableRowProps) {
+    const { chartOptions, rowData } = props;
+    const [displayType, setDisplayType] = useState("chart");
+    return (
+        <div style={{ width: "100%" }}>
             {/* First Accordion for Highcharts */}
-            <Accordion sx={{ width: '100%' }}>
+            <Accordion sx={{ width: "100%" }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Typography>Row 1</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <HighchartsReact
-                        highcharts={Highcharts}
-                        options={chartOptions}
-                    />
-                </AccordionDetails>
-            </Accordion>
-
-            {/* Second Accordion for AG-Grid */}
-            <Accordion>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                    <Typography>Row 2</Typography>
-                </AccordionSummary>
-                <AccordionDetails style={{ width: "100%" }}>
-                    <div
-                        className="ag-theme-alpine"
-                        style={{ height: "500px", width: "100%" }}
+                    {/* Button to toggle display */}
+                    <button
+                        onClick={() =>
+                            setDisplayType((prevType) =>
+                                prevType === "chart" ? "grid" : "chart"
+                            )
+                        }
                     >
-                        <AgGridReact
-                            rowData={rowData}
-                            domLayout="autoHeight"
-                            columnDefs={[
-                                { headerName: "Name", field: "name" },
-                                { headerName: "Age", field: "age" },
-                            ]}
+                        Toggle Display
+                    </button>
+
+                    {displayType === "chart" ? (
+                        <HighchartsReact
+                            highcharts={Highcharts}
+                            options={chartOptions}
                         />
-                    </div>
+                    ) : (
+                        <div
+                            className="ag-theme-alpine"
+                            style={{ height: "200px", width: "100%" }}
+                        >
+                            <AgGridReact
+                                rowData={rowData}
+                                domLayout="autoHeight"
+                                columnDefs={[
+                                    { headerName: "Name", field: "name" },
+                                    { headerName: "Age", field: "age" },
+                                ]}
+                            />
+                        </div>
+                    )}
                 </AccordionDetails>
             </Accordion>
-
-            {/* ... Repeat for more rows */}
         </div>
     );
 }

@@ -1,12 +1,10 @@
-.grid-container {
-    flex: 1;
-}
-
 .inner-grid {
     flex-basis: 100%;
-    background-color: red;
+    background-color: rgb(7, 6, 6);
 }
 
+.grid-container,
 .driver-details-container {
     flex: 1;
+    padding: 2rem 2rem;
 }

@@ -1,4 +1,4 @@
-export enum ColNames {
+export enum AllDriversColNames {
     ID = 'id',
     FORNAME = 'forename',
     SURNAME = 'surname',
@@ -7,4 +7,12 @@ export enum ColNames {
     DRIVERREF = 'driverRef',
     NUMBER = 'number',
     CODE = 'code'
+}
+
+export enum DriverDetailsColNames {
+    LAP = 'lap',
+    LAPTIMEID = 'lapTimeId',
+    MILLISECONDS = 'milliseconds',
+    POSITION = 'position',
+    RACEID = 'raceId',
 }

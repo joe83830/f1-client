@@ -17,7 +17,7 @@ import {
     ICustomTextFilter,
     OperatorType,
 } from "../../utils/FilterUtils";
-import { ColNames } from "../../constants/ColNames";
+import { AllDriversColNames } from "../../constants/ColNames";
 import {
     Button,
     FormControl,
@@ -31,7 +31,7 @@ import { useFilterContext } from "../providers/FilterProvider";
 
 export interface IMyFilterParams {
     maxNumConditions: number;
-    fieldName: ColNames;
+    fieldName: AllDriversColNames;
 }
 
 export type TCustomFilterParams = IFilterParams<IDriverRowData> &
@@ -59,7 +59,7 @@ export default forwardRef((props: TCustomFilterParams, ref) => {
     useEffect(() => {
         if (!!activeFilter) {
             const initialFilterObj =
-                activeFilter[props.fieldName as ColNames.NATIONALITY];
+                activeFilter[props.fieldName as AllDriversColNames.NATIONALITY];
             if (!!initialFilterObj) {
                 setFilterObjects(initialFilterObj.conditions);
                 setJoinOperator(initialFilterObj.operator);
@@ -104,7 +104,7 @@ export default forwardRef((props: TCustomFilterParams, ref) => {
                     if (!!activeFilter) {
                         const newFilter = { ...activeFilter };
                         delete newFilter[
-                            props.fieldName as ColNames.NATIONALITY
+                            props.fieldName as AllDriversColNames.NATIONALITY
                         ];
                         setActiveFilter(newFilter);
                     } else {

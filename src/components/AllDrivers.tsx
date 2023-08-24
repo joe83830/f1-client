@@ -5,20 +5,20 @@ import "/styles/Drivers.scss";
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import { ColNames } from "../constants/ColNames";
+import { AllDriversColNames } from "../constants/ColNames";
 import { useHistory, useLocation } from "react-router-dom";
 import { useFilterContext } from "./providers/FilterProvider";
 import { LinkCellRenderer } from "./custom-cell-renderers/LinkCellRenderer";
 
 export interface IDriverRowData {
-    [ColNames.ID]: number;
-    [ColNames.FORNAME]: string;
-    [ColNames.SURNAME]: string;
-    [ColNames.DOB]: Date;
-    [ColNames.NATIONALITY]: string;
-    [ColNames.DRIVERREF]: string;
-    [ColNames.NUMBER]: number;
-    [ColNames.CODE]: string;
+    [AllDriversColNames.ID]: number;
+    [AllDriversColNames.FORNAME]: string;
+    [AllDriversColNames.SURNAME]: string;
+    [AllDriversColNames.DOB]: Date;
+    [AllDriversColNames.NATIONALITY]: string;
+    [AllDriversColNames.DRIVERREF]: string;
+    [AllDriversColNames.NUMBER]: number;
+    [AllDriversColNames.CODE]: string;
 }
 
 type TStrongColDef = ColDef<IDriverRowData> & { field: string };
@@ -37,16 +37,16 @@ export default function AllDrivers() {
     const { finalizedActiveFilter, setFinalizedActiveFilter } = filterContext;
 
     const [columnDefs, _] = useState<TStrongColDef[]>([
-        { field: ColNames.ID, cellRenderer: LinkCellRenderer },
-        { field: ColNames.FORNAME },
-        { field: ColNames.SURNAME },
+        { field: AllDriversColNames.ID, cellRenderer: LinkCellRenderer },
+        { field: AllDriversColNames.FORNAME },
+        { field: AllDriversColNames.SURNAME },
         {
-            field: ColNames.NATIONALITY,
+            field: AllDriversColNames.NATIONALITY,
         },
-        { field: ColNames.DRIVERREF, filter: true },
-        { field: ColNames.NUMBER, filter: true },
-        { field: ColNames.DOB, sortable: true, filter: true },
-        { field: ColNames.CODE },
+        { field: AllDriversColNames.DRIVERREF, filter: true },
+        { field: AllDriversColNames.NUMBER, filter: true },
+        { field: AllDriversColNames.DOB, sortable: true, filter: true },
+        { field: AllDriversColNames.CODE },
     ]);
 
     useEffect(() => {

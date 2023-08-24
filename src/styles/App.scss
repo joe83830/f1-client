@@ -1,26 +1,28 @@
 .app {
-  text-align: left;
-  display: flex;
-  height: 100%;
-  flex-direction: row;
+    text-align: left;
+    display: flex;
+    height: 100%;
+    flex-direction: row;
 }
-
-
 
 .nav-container {
-  width: 200px;
+    min-width: 200px;
 }
 
-html, body, #root {
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  width: 100%;
+html,
+body,
+#root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
 }
 
 html {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
-*, *:before, *:after {
-  box-sizing: inherit;
+*,
+*:before,
+*:after {
+    box-sizing: inherit;
 }

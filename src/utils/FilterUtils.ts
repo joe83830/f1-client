@@ -1,4 +1,4 @@
-import { ColNames } from "../constants/ColNames";
+import { AllDriversColNames } from "../constants/ColNames";
 
 // File is not really used rn
 
@@ -48,15 +48,15 @@ export enum OperatorType {
 }
 
 export interface IFilterModel {
-    [ColNames.NATIONALITY]?:
+    [AllDriversColNames.NATIONALITY]?:
         | ICustomTextFilter
         | IComplexFilter<ICustomTextFilter>;
-    [ColNames.DOB]?: IDobFilter | IComplexFilter<IDobFilter>;
+    [AllDriversColNames.DOB]?: IDobFilter | IComplexFilter<IDobFilter>;
 }
 
 export interface IConsolidatedFilterModel {
-    [ColNames.NATIONALITY]?: IConsolidatedComplexFilter<ICustomTextFilter>;
-    [ColNames.DOB]?: IConsolidatedComplexFilter<IDobFilter>;
+    [AllDriversColNames.NATIONALITY]?: IConsolidatedComplexFilter<ICustomTextFilter>;
+    [AllDriversColNames.DOB]?: IConsolidatedComplexFilter<IDobFilter>;
 }
 
 export interface IConsolidatedComplexFilter<T> {
@@ -92,7 +92,7 @@ export function isComplexFilter<T>(
 }
 
 function singleConditionQueryString(
-    colName: ColNames,
+    colName: AllDriversColNames,
     comparator:
         | ComparatorTypeString
         | ComparatorTypeNumber
@@ -131,11 +131,11 @@ export function dateFilterQueryString(
             switch (condition.type) {
                 case ComparatorTypeDate.INRANGE:
                     dateQueryString += `${joinOperator}${singleConditionQueryString(
-                        ColNames.DOB,
+                        AllDriversColNames.DOB,
                         condition.type,
                         condition.dateFrom
                     )}&${singleConditionQueryString(
-                        ColNames.DOB,
+                        AllDriversColNames.DOB,
                         condition.type,
                         condition.dateTo
                     )}`;
@@ -143,7 +143,7 @@ export function dateFilterQueryString(
                 case ComparatorTypeDate.BLANK:
                 case ComparatorTypeDate.NOTBLANK:
                     dateQueryString += `${joinOperator}${singleConditionQueryString(
-                        ColNames.DOB,
+                        AllDriversColNames.DOB,
                         condition.type
                     )}`;
                     break;
@@ -152,7 +152,7 @@ export function dateFilterQueryString(
                 case ComparatorTypeDate.GREATERTHAN:
                 case ComparatorTypeDate.LESSTHAN:
                     dateQueryString += `${joinOperator}${singleConditionQueryString(
-                        ColNames.DOB,
+                        AllDriversColNames.DOB,
                         condition.type,
                         condition.dateFrom
                     )}`;

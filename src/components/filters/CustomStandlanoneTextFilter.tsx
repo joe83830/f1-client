@@ -8,7 +8,7 @@ import {
     ICustomTextFilter,
     OperatorType,
 } from "../../utils/FilterUtils";
-import { ColNames } from "../../constants/ColNames";
+import { AllDriversColNames } from "../../constants/ColNames";
 import {
     Button,
     FormControl,
@@ -24,7 +24,7 @@ import {
 import { useFilterContext } from "../providers/FilterProvider";
 
 export interface ICustomStandaloneTextFilterProps {
-    fieldName: ColNames;
+    fieldName: AllDriversColNames;
 }
 export default function CustomStandaloneTextFilter(
     props: ICustomStandaloneTextFilterProps
@@ -46,7 +46,7 @@ export default function CustomStandaloneTextFilter(
     useEffect(() => {
         if (!!finalizedActiveFilter) {
             const initialFilterObj =
-                finalizedActiveFilter[fieldName as ColNames.NATIONALITY];
+                finalizedActiveFilter[fieldName as AllDriversColNames.NATIONALITY];
             if (!!initialFilterObj) {
                 setFilterObjects(initialFilterObj.conditions);
                 setJoinOperator(initialFilterObj.operator);
@@ -67,7 +67,7 @@ export default function CustomStandaloneTextFilter(
             if (nonEmptyFilterObjs.length === 0) {
                 if (!!activeFilter) {
                     const newFilter = { ...activeFilter };
-                    delete newFilter[fieldName as ColNames.NATIONALITY];
+                    delete newFilter[fieldName as AllDriversColNames.NATIONALITY];
                     setActiveFilter(newFilter);
                 } else {
                     setActiveFilter(undefined);

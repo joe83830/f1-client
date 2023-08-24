@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useContext, useState } from "react";
 import { IConsolidatedFilterModel } from "../../utils/FilterUtils";
-import { ColNames } from "../../constants/ColNames";
+import { AllDriversColNames } from "../../constants/ColNames";
 
 export interface IFilterContext {
     finalizedActiveFilter: IConsolidatedFilterModel | undefined;
@@ -11,8 +11,8 @@ export interface IFilterContext {
     setFinalizedActiveFilter: React.Dispatch<
         React.SetStateAction<IConsolidatedFilterModel | undefined>
     >;
-    availableFilters: ColNames[] | undefined;
-    availableAggregates: ColNames[];
+    availableFilters: AllDriversColNames[] | undefined;
+    availableAggregates: AllDriversColNames[];
     searchCallback: () => void;
 }
 
@@ -31,12 +31,12 @@ export const FilterProvider = ({ children }: { children: ReactNode }) => {
     };
     // To be replaced by backend call
     const availableFilters = [
-        ColNames.SURNAME,
-        ColNames.FORNAME,
-        ColNames.NATIONALITY,
-        ColNames.CODE,
+        AllDriversColNames.SURNAME,
+        AllDriversColNames.FORNAME,
+        AllDriversColNames.NATIONALITY,
+        AllDriversColNames.CODE,
     ];
-    const availableAggregates = [] as ColNames[];
+    const availableAggregates = [] as AllDriversColNames[];
 
     return (
         <FilterContext.Provider

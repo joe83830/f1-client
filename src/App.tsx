@@ -24,7 +24,7 @@ export default function Application() {
                             <AllDrivers />
                             <PivotTable />
                         </Route>
-                        <Route exact path="/all-drivers/:driverId">
+                        <Route exact path="/all-drivers/:driverId/page/:pageNumber">
                             <DriverDetails />
                         </Route>
                         <Route exact path="/races">

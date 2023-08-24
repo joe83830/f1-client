@@ -20,9 +20,12 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
 import { DriverDetailsColNames } from "../constants/ColNames";
 import { ColDef } from "ag-grid-community";
+import Pagination from "@mui/material/Pagination";
+import { useHistory } from "react-router-dom";
 
 type DriverParams = {
     driverId: string;
+    pageNumber?: string;
 };
 
 export interface IDriverLaptimeRowData {
@@ -48,18 +51,23 @@ export interface IDriverLaptimeMetadata {
 }
 
 export function DriverDetails() {
-    const { driverId } = useParams<DriverParams>();
+    const { driverId, pageNumber } = useParams<DriverParams>();
     const [driverRaceData, setDriverRaceData] = useState<
         IDriverLaptimeRaceData[]
     >([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const [name, setName] = useState<string>();
-    const [driverLaptimeMetadata, setDriverLaptimeMetadata] =
-        useState<IDriverLaptimeMetadata>({} as IDriverLaptimeMetadata);
+    const [metaData, setMetadata] = useState<IDriverLaptimeMetadata>(
+        {} as IDriverLaptimeMetadata
+    );
+    const history = useHistory();
 
-    const curPage = driverLaptimeMetadata.currentPage || 1;
-    const fetchData = async () => {
+    const curPage = pageNumber
+        ? parseInt(pageNumber)
+        : metaData.currentPage || 1;
+
+    const fetchData = async (id: string, page: number) => {
         const response = await fetch(
             `https://localhost:7077/driver/laptimes/${driverId}?page=${curPage}`
         );
@@ -68,12 +76,12 @@ export function DriverDetails() {
     };
 
     useEffect(() => {
-        fetchData()
+        fetchData(driverId, curPage)
             .then((res) => {
                 const { metadata, data, name } = res;
                 console.log(metadata, data);
                 setDriverRaceData(data);
-                setDriverLaptimeMetadata(metadata);
+                setMetadata(metadata);
                 setName(name);
                 setIsLoading(false);
             })
@@ -81,17 +89,16 @@ export function DriverDetails() {
                 alert("Error fetching driver details.");
                 console.error(error);
             });
-    }, []);
+    }, [driverId, curPage]);
 
     useEffect(() => {
-        console.log("JOE rerender")
-    })
+        console.log("JOE rerender");
+    });
 
     return (
         <div className="driver-details-container">
-            <h1 style={{ marginTop: 0 }}>{name}</h1>
+            <h1 style={{ margin: 0, paddingBottom: "4rem" }}>{name}</h1>
             <div>
-                {isLoading && <h1>LOADING</h1>}
                 {!isLoading &&
                     driverRaceData.map((race, ind) => (
                         <Fragment key={`${race.raceId}+ind`}>
@@ -100,6 +107,15 @@ export function DriverDetails() {
                             <Divider />
                         </Fragment>
                     ))}
+            </div>
+            <div style={{paddingTop: "4rem"}}>
+                <Pagination
+                    count={metaData.totalPages}
+                    page={metaData.currentPage || 1}
+                    onChange={(event, value) => {
+                        history.push(`/all-drivers/${driverId}/page/${value}`);
+                    }}
+                />
             </div>
         </div>
     );
@@ -111,7 +127,7 @@ interface IRaceData {
 
 function Race(props: IRaceData) {
     const { raceId, lapTimes } = props.driverLaptimeRaceData;
-    console.log("JOE rerender RACE")
+    console.log("JOE rerender RACE");
     const [columnDefs, setColDef] = useState<ColDef<IDriverLaptimeRowData>[]>([
         { field: DriverDetailsColNames.RACEID },
         { field: DriverDetailsColNames.LAP },
@@ -120,7 +136,8 @@ function Race(props: IRaceData) {
         { field: DriverDetailsColNames.LAPTIMEID },
     ]);
 
-    const [charOptionsState, setChartOptionsState] = useState<Highcharts.Options>();
+    const [charOptionsState, setChartOptionsState] =
+        useState<Highcharts.Options>();
 
     useEffect(() => {
         setChartOptionsState({
@@ -139,12 +156,12 @@ function Race(props: IRaceData) {
             },
             series: [
                 {
-                    type: 'line',
+                    type: "line",
                     name: "Lap Time",
                     data: lapTimes.map((lap) => [lap.lap, lap.milliseconds]),
                 },
             ],
-        })
+        });
     }, [lapTimes]);
 
     const [displayType, setDisplayType] = useState("grid");
@@ -184,9 +201,7 @@ function Race(props: IRaceData) {
                     </div>
 
                     {displayType === "chart" ? (
-                        <div
-                            style={{ maxWidth: "1200px", width: "100%" }}
-                        >
+                        <div style={{ maxWidth: "1200px", width: "100%" }}>
                             <HighchartsReact
                                 highcharts={Highcharts}
                                 options={charOptionsState}

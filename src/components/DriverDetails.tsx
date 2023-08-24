@@ -83,6 +83,10 @@ export function DriverDetails() {
             });
     }, []);
 
+    useEffect(() => {
+        console.log("JOE rerender")
+    })
+
     return (
         <div className="driver-details-container">
             <h1 style={{ marginTop: 0 }}>{name}</h1>
@@ -107,8 +111,8 @@ interface IRaceData {
 
 function Race(props: IRaceData) {
     const { raceId, lapTimes } = props.driverLaptimeRaceData;
-
-    const [columnDefs, _] = useState<ColDef<IDriverLaptimeRowData>[]>([
+    console.log("JOE rerender RACE")
+    const [columnDefs, setColDef] = useState<ColDef<IDriverLaptimeRowData>[]>([
         { field: DriverDetailsColNames.RACEID },
         { field: DriverDetailsColNames.LAP },
         { field: DriverDetailsColNames.POSITION },
@@ -116,27 +120,32 @@ function Race(props: IRaceData) {
         { field: DriverDetailsColNames.LAPTIMEID },
     ]);
 
-    const chartOptions = {
-        title: {
-            text: "Lap Times",
-        },
-        xAxis: {
+    const [charOptionsState, setChartOptionsState] = useState<Highcharts.Options>();
+
+    useEffect(() => {
+        setChartOptionsState({
             title: {
-                text: "Lap",
+                text: "Lap Times",
             },
-        },
-        yAxis: {
-            title: {
-                text: "Milliseconds",
+            xAxis: {
+                title: {
+                    text: "Lap",
+                },
             },
-        },
-        series: [
-            {
-                name: "Lap Time",
-                data: lapTimes.map((lap) => [lap.lap, lap.milliseconds]),
+            yAxis: {
+                title: {
+                    text: "Milliseconds",
+                },
             },
-        ],
-    };
+            series: [
+                {
+                    type: 'line',
+                    name: "Lap Time",
+                    data: lapTimes.map((lap) => [lap.lap, lap.milliseconds]),
+                },
+            ],
+        })
+    }, [lapTimes]);
 
     const [displayType, setDisplayType] = useState("grid");
     return (
@@ -176,17 +185,17 @@ function Race(props: IRaceData) {
 
                     {displayType === "chart" ? (
                         <div
-                            style={{ width: "100%" }}
+                            style={{ maxWidth: "1200px", width: "100%" }}
                         >
                             <HighchartsReact
                                 highcharts={Highcharts}
-                                options={chartOptions}
+                                options={charOptionsState}
                             />
                         </div>
                     ) : (
                         <div
                             className="ag-theme-alpine"
-                            style={{ width: "100%" }}
+                            style={{ maxWidth: "1200px", width: "100%" }}
                         >
                             <AgGridReact
                                 rowData={lapTimes}
